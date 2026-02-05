@@ -1,0 +1,135 @@
+/* Configurações Gerais */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Card Principal (Imagem 1) */
+.card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+}
+
+h2 {
+    color: #8B0000; /* Vermelho escuro conforme imagem */
+    margin-top: 0;
+}
+
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.input-wrapper {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.prefix {
+    background: #eee;
+    padding: 8px 12px;
+    border-right: 1px solid #ccc;
+    font-size: 14px;
+}
+
+input, select {
+    border: none;
+    padding: 8px 10px;
+    width: 100%;
+    outline: none;
+    background: #fafafa;
+}
+
+.btn-calcular {
+    background: #8B0000;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.3s;
+}
+
+.btn-calcular:hover {
+    background: #600000;
+}
+
+/* Resultados e Gráficos (Imagem 2) */
+.resumo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.card-resumo {
+    text-align: center;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.res-juros { color: #8eb4d9; font-size: 24px; font-weight: bold; }
+.res-investido { color: #4b5563; font-size: 24px; font-weight: bold; }
+.res-final { color: #333; font-size: 24px; font-weight: bold; }
+
+.charts-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Tabela (Imagem 3) */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th {
+    background-color: #f8f9fa;
+    color: #666;
+    font-size: 13px;
+    text-align: left;
+    padding: 12px;
+    border-bottom: 2px solid #eee;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+tr:nth-child(even) {
+    background-color: #fcfcfc;
+}
