@@ -56,39 +56,53 @@ function renderizarGraficos(data) {
     if (chartPizza) chartPizza.destroy();
     if (chartBarras) chartBarras.destroy();
 
-    // Pizza
+    const cores = {
+        investido: '#6B7280', // Cinza fosco (neutro)
+        juros: '#10B981'     // Verde vibrante (destaque)
+    };
+
+    // 1. Gráfico de Rosca (Pizza)
     chartPizza = new Chart(document.getElementById('chartPizza'), {
         type: 'doughnut',
         data: {
-            labels: ['Investido', 'Juros'],
+            labels: ['Total Investido', 'Total em Juros'],
             datasets: [{
                 data: [data.resumo.total_investido, data.resumo.total_juros],
-                backgroundColor: ['#4B5563', '#BFDBFE']
+                backgroundColor: [cores.investido, cores.juros],
+                hoverOffset: 30
             }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            layout: { padding: 25 }
         }
     });
 
-    // Barras - MOSTRA TODOS OS MESES (ex: 12 colunas para 1 ano)
+    // 2. Gráfico de Barras
     chartBarras = new Chart(document.getElementById('chartBarras'), {
         type: 'bar',
         data: {
-            labels: data.tabela.map(i => `Mês ${i.mes}`),
+            labels: data.tabela.map(item => `Mês ${item.mes}`),
             datasets: [
                 {
                     label: 'Investido',
-                    data: data.tabela.map(i => i.total_investido),
-                    backgroundColor: '#4B5563'
+                    data: data.tabela.map(item => item.total_investido),
+                    backgroundColor: cores.investido
                 },
                 {
                     label: 'Juros',
-                    data: data.tabela.map(i => i.juros_acumlado),
-                    backgroundColor: '#BFDBFE'
+                    data: data.tabela.map(item => item.juros_acumlado),
+                    backgroundColor: cores.juros
                 }
             ]
         },
         options: {
             responsive: true,
-            scales: { x: { stacked: true }, y: { stacked: true } }
+            maintainAspectRatio: false,
+            scales: { 
+                x: { stacked: true }, 
+                y: { stacked: true, beginAtZero: true } 
+            }
         }
     });
 }
@@ -151,4 +165,54 @@ async function calcular() {
     } catch (e) {
         alert("Erro ao calcular. Verifique se os números colacados sáo válidos!");
     }
+}
+
+let dadosTabelaCompleta = []; // Armazena todos os dados da API
+let tabelaExpandida = false;  // Controle de estado
+
+function exibirInterface(data) {
+    document.getElementById('secao-resultados').classList.remove('hidden');
+    dadosTabelaCompleta = data.tabela; // Salva os dados recebidos
+    tabelaExpandida = false; // Reseta o estado ao calcular novo
+
+    // Cards de resumo
+    document.getElementById('res-juros').innerText = `R$ ${data.resumo.total_juros.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    document.getElementById('res-investido').innerText = `R$ ${data.resumo.total_investido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    document.getElementById('res-final').innerText = `R$ ${data.resumo.valor_final.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+
+    renderizarTabela(); // Chama a nova função de renderização
+    renderizarGraficos(data);
+}
+
+function renderizarTabela() {
+    const tbody = document.getElementById('tabela-corpo');
+    const wrapperBotao = document.getElementById('wrapper-ver-mais');
+    const btnVerMais = document.getElementById('btn-ver-mais');
+
+    const limiteOriginal = 6; 
+    const dadosParaExibir = tabelaExpandida ? dadosTabelaCompleta : dadosTabelaCompleta.slice(0, limiteOriginal);
+
+    tbody.innerHTML = dadosParaExibir.map(row => `
+        <tr class="hover:bg-gray-50 transition-colors">
+            <td>${row.mes}</td>
+            <td>R$ ${row.juros_mes.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td>R$ ${row.total_investido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td>R$ ${row.juros_acumlado.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td>R$ ${row.saldo_acumulado.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+        </tr>
+    `).join('');
+
+    // Lógica do Botão:
+    if (dadosTabelaCompleta.length > limiteOriginal) {
+        wrapperBotao.classList.remove('hidden');
+        // Atualiza o texto mantendo o estilo do retângulo
+        btnVerMais.innerText = tabelaExpandida ? "Ver menos" : "Visualizar tabela completa";
+    } else {
+        wrapperBotao.classList.add('hidden');
+    }
+}
+
+function toggleTabela() {
+    tabelaExpandida = !tabelaExpandida;
+    renderizarTabela();
 }

@@ -7,22 +7,62 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        body { background-color: #F3F4F6; }
+
         .card { 
             background-color: white; padding: 1.5rem; border-radius: 0.5rem; 
             border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
+
+        /* Título agora em PRETO conforme solicitado */
+        h2 { 
+            color: #000000 !important; 
+            font-weight: 800; /* Deixando um pouco mais negrito para destaque */
+        }
+
         .input-field { 
-            border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.5rem; 
-            background-color: #f9fafb; outline: none; width: 100%;
+            border: 1px solid #D1D5DB; border-radius: 0.375rem; padding: 0.5rem; 
+            background-color: #FFFFFF; outline: none; width: 100%;
         }
-        .input-field:focus { border-color: #991b1b; ring: 2px; }
+        .input-field:focus { border-color: #10B981; border-width: 2px; }
+
+        /* Botão Calcular: Verde com contorno Preto */
         .btn-calc { 
-            background-color: #7f1d1d; color: white; font-weight: bold; 
-            padding: 0.5rem 1.5rem; border-radius: 0.375rem; border: none; cursor: pointer;
+            background-color: #10B981; 
+            color: white; 
+            font-weight: bold; 
+            padding: 0.6rem 2rem; 
+            border-radius: 0.375rem; 
+            border: 2px solid #000000; /* Contorno preto */
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
         }
-        .btn-calc:hover { background-color: #991b1b; }
-        th { background-color: #f3f4f6; padding: 0.75rem; text-align: left; color: #4b5563; font-size: 0.875rem; }
-        td { padding: 0.75rem; border-top: 1px solid #e5e7eb; color: #374151; font-size: 0.875rem; }
+
+        .btn-calc:hover { 
+            background-color: #059669; 
+            box-shadow: 4px 4px 0px #000000; /* Sombra sólida preta no hover */
+            transform: translate(-2px, -2px);
+        }
+
+        /* Botão Ver Mais também seguindo o padrão */
+        #btn-ver-mais {
+            border: 2px solid #000000;
+            background-color: #10B981;
+            color: white;
+            border-radius: 9999px;
+            padding: 0.6rem 2rem;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        #btn-ver-mais:hover {
+            background-color: #059669;
+            box-shadow: 3px 3px 0px #000000;
+        }
+
+        th { background-color: #F9FAF7; padding: 0.75rem; text-align: left; color: #4b5563; }
+        td { padding: 0.75rem; border-top: 1px solid #e5e7eb; }
     </style>
 </head>
 <body class="bg-gray-100 p-4 md:p-10">
@@ -30,45 +70,45 @@
         <div class="card mb-8">
             <h2 class="text-xl font-bold text-red-900 mb-6">Simulador de Juros Compostos</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div>
-        <label class="block text-sm font-semibold mb-1">Valor inicial</label>
-        <div class="flex">
-                    <span class="bg-gray-200 p-2 border border-r-0 rounded-l-md text-sm">R$</span>
-                    <input type="text" id="valor_inicial" class="input-field rounded-l-none js-money" value="0,00">
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Valor inicial</label>
+                    <div class="flex">
+                        <span class="bg-gray-200 p-2 border border-r-0 rounded-l-md text-sm">R$</span>
+                        <input type="text" id="valor_inicial" class="input-field rounded-l-none js-money" value="0,00">
+                    </div>
                 </div>
-            </div>
 
-            <div>
-                <label class="block text-sm font-semibold mb-1">Valor mensal</label>
-                <div class="flex">
-                    <span class="bg-gray-200 p-2 border border-r-0 rounded-l-md text-sm">R$</span>
-                    <input type="text" id="valor_mensal" class="input-field rounded-l-none js-money" value="0,00">
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Valor mensal</label>
+                    <div class="flex">
+                        <span class="bg-gray-200 p-2 border border-r-0 rounded-l-md text-sm">R$</span>
+                        <input type="text" id="valor_mensal" class="input-field rounded-l-none js-money" value="0,00">
+                    </div>
                 </div>
-            </div>
 
-            <div>
-                <label class="block text-sm font-semibold mb-1">Taxa de juros</label>
-                <div class="flex">
-                    <span class="bg-gray-200 p-2 border border-r-0 rounded-l-md text-sm">%</span>
-                    <input type="text" id="taxa_juros" class="input-field rounded-none js-money" value="0,00">
-                    <select id="tipo_taxa" class="input-field rounded-l-none border-l-0 w-32">
-                        <option value="anual">anual</option>
-                        <option value="mensal">mensal</option>
-                    </select>
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Taxa de juros</label>
+                    <div class="flex">
+                        <span class="bg-gray-200 p-2 border border-r-0 rounded-l-md text-sm">%</span>
+                        <input type="text" id="taxa_juros" class="input-field rounded-none js-money" value="0,00">
+                        <select id="tipo_taxa" class="input-field rounded-l-none border-l-0 w-32">
+                            <option value="anual">anual</option>
+                            <option value="mensal">mensal</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Período</label>
+                    <div class="flex">
+                        <input type="number" id="periodo" class="input-field rounded-r-none" value="1">
+                        <select id="tipo_periodo" class="input-field rounded-l-none border-l-0 w-32">
+                            <option value="anos">ano(s)</option>
+                            <option value="meses">mês(es)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-            
-            <div>
-                <label class="block text-sm font-semibold mb-1">Período</label>
-                <div class="flex">
-                    <input type="number" id="periodo" class="input-field rounded-r-none" value="1">
-                    <select id="tipo_periodo" class="input-field rounded-l-none border-l-0 w-32">
-                        <option value="anos">ano(s)</option>
-                        <option value="meses">mês(es)</option>
-                    </select>
-                </div>
-            </div>
-        </div>
             <button onclick="calcular()" class="btn-calc mt-6">Calcular</button>
         </div>
 
@@ -90,9 +130,13 @@
 
             <div class="card mb-8">
                 <h3 class="font-bold border-b pb-2 mb-4 uppercase text-xs tracking-wider text-gray-500">Gráfico</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="h-64"><canvas id="chartPizza"></canvas></div>
-                    <div class="h-64"><canvas id="chartBarras"></canvas></div>
+                <div class="flex flex-col gap-12"> 
+                    <div class="h-80 w-full max-w-md mx-auto">
+                        <canvas id="chartPizza"></canvas>
+                    </div>
+                    <div class="h-80 w-full">
+                        <canvas id="chartBarras"></canvas>
+                    </div>
                 </div>
             </div>
 
@@ -110,9 +154,14 @@
                     </thead>
                     <tbody id="tabela-corpo"></tbody>
                 </table>
+                <div id="wrapper-ver-mais" class="mt-6 text-center hidden">
+                    <button id="btn-ver-mais" onclick="toggleTabela()" 
+                        class="inline-block border-2 border-red-900 text-red-900 font-bold py-2 px-8 rounded-full hover:bg-red-900 hover:text-white transition-all duration-300 text-sm uppercase tracking-wide">
+                        Visualizar tabela completa
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
     <script src="script.js"></script>
 </body>
 </html>
