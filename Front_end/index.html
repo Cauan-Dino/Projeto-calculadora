@@ -30,42 +30,45 @@
         <div class="card mb-8">
             <h2 class="text-xl font-bold text-red-900 mb-6">Simulador de Juros Compostos</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-semibold mb-1">Valor inicial</label>
-                    <div class="flex">
-                        <span class="bg-gray-200 p-2 border border-r-0 rounded-l-md text-sm">R$</span>
-                        <input type="number" id="valor_inicial" class="input-field rounded-l-none" value="1000">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-1">Valor mensal</label>
-                    <div class="flex">
-                        <span class="bg-gray-200 p-2 border border-r-0 rounded-l-md text-sm">R$</span>
-                        <input type="number" id="valor_mensal" class="input-field rounded-l-none" value="100">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-1">Taxa de juros</label>
-                    <div class="flex">
-                        <span class="bg-gray-200 p-2 border border-r-0 rounded-l-md text-sm">%</span>
-                        <input type="number" id="taxa_juros" class="input-field rounded-none" value="12">
-                        <select id="tipo_taxa" class="input-field rounded-l-none border-l-0 w-32">
-                            <option value="anual">anual</option>
-                            <option value="mensal">mensal</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-1">Período</label>
-                    <div class="flex">
-                        <input type="number" id="periodo" class="input-field rounded-r-none" value="1">
-                        <select id="tipo_periodo" class="input-field rounded-l-none border-l-0 w-32">
-                            <option value="anos">ano(s)</option>
-                            <option value="meses">mês(es)</option>
-                        </select>
-                    </div>
+    <div>
+        <label class="block text-sm font-semibold mb-1">Valor inicial</label>
+        <div class="flex">
+                    <span class="bg-gray-200 p-2 border border-r-0 rounded-l-md text-sm">R$</span>
+                    <input type="text" id="valor_inicial" class="input-field rounded-l-none js-money" value="0,00">
                 </div>
             </div>
+
+            <div>
+                <label class="block text-sm font-semibold mb-1">Valor mensal</label>
+                <div class="flex">
+                    <span class="bg-gray-200 p-2 border border-r-0 rounded-l-md text-sm">R$</span>
+                    <input type="text" id="valor_mensal" class="input-field rounded-l-none js-money" value="0,00">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold mb-1">Taxa de juros</label>
+                <div class="flex">
+                    <span class="bg-gray-200 p-2 border border-r-0 rounded-l-md text-sm">%</span>
+                    <input type="text" id="taxa_juros" class="input-field rounded-none js-money" value="0,00">
+                    <select id="tipo_taxa" class="input-field rounded-l-none border-l-0 w-32">
+                        <option value="anual">anual</option>
+                        <option value="mensal">mensal</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold mb-1">Período</label>
+                <div class="flex">
+                    <input type="number" id="periodo" class="input-field rounded-r-none" value="1">
+                    <select id="tipo_periodo" class="input-field rounded-l-none border-l-0 w-32">
+                        <option value="anos">ano(s)</option>
+                        <option value="meses">mês(es)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
             <button onclick="calcular()" class="btn-calc mt-6">Calcular</button>
         </div>
 

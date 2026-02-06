@@ -92,3 +92,63 @@ function renderizarGraficos(data) {
         }
     });
 }
+
+// Função para formatar o valor enquanto digita
+function configurarMascaras() {
+    const camposMoeda = document.querySelectorAll('.js-money');
+
+    camposMoeda.forEach(input => {
+        input.addEventListener('input', (e) => {
+            let value = e.target.value;
+
+            // Remove tudo que não é dígito
+            value = value.replace(/\D/g, "");
+
+            // Transforma em decimal (ex: 50000 vira 500.00)
+            value = (value / 100).toFixed(2) + "";
+
+            // Troca ponto por vírgula e adiciona pontos de milhar
+            value = value.replace(".", ",");
+            value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+
+            e.target.value = value === "NaN" ? "0,00" : value;
+        });
+    });
+}
+
+// Chame a função ao carregar a página
+document.addEventListener('DOMContentLoaded', configurarMascaras);
+
+// --- AJUSTE NA FUNÇÃO DE CALCULAR ---
+// Como agora os campos são texto (ex: "50.000,00"), precisamos "limpar" 
+// para enviar à API como número puro (ex: 50000.00)
+
+function limparParaNumero(str) {
+    if (!str) return 0;
+    // Remove pontos e troca a vírgula por ponto
+    return parseFloat(str.replace(/\./g, "").replace(",", "."));
+}
+
+async function calcular() {
+    const payload = {
+        C: limparParaNumero(document.getElementById('valor_inicial').value),
+        A: limparParaNumero(document.getElementById('valor_mensal').value),
+        taxa_juros: limparParaNumero(document.getElementById('taxa_juros').value),
+        T: parseInt(document.getElementById('periodo').value),
+        taxa_juros_mensal: document.getElementById('tipo_taxa').value === 'mensal',
+        tempo_mensal: document.getElementById('tipo_periodo').value === 'meses'
+    };
+
+    // ... restante do seu código fetch ...
+    try {
+        const response = await fetch('http://127.0.0.1:8000/calculadora', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        exibirInterface(data);
+    } catch (e) {
+        alert("Erro ao calcular. Verifique se os números colacados sáo válidos!");
+    }
+}
