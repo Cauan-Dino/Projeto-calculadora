@@ -28,35 +28,49 @@ function configurarMascaras() {
 
 // --- 2. FUNÇÃO PRINCIPAL DE CÁLCULO ---
 
-async function calcularAposentadoria() {
-    const msgErro = document.getElementById('erro-aposentadoria');
+async function calcular() {
+    const msgErro = document.getElementById('erro-mensagem');
     
-    // 1. Esconde o erro e limpa o texto antes de começar a validar
+    // Reseta o estado inicial
     msgErro.classList.add('hidden');
     msgErro.innerText = "";
 
-    // 2. Captura os valores (usando a função de limpar que já temos)
-    const rendaDesejada = limparParaNumero(document.getElementById('renda').value);
-    const anosAposentadoria = parseInt(document.getElementById('tempo').value);
+    // Captura os valores dos campos
+    const campoTaxa = document.getElementById('taxa_juros').value;
+    const taxaNumerica = limparParaNumero(campoTaxa);
 
-    // 3. Validações Personalizadas
-    if (rendaDesejada <= 0) {
-        msgErro.innerText = "⚠️ Qual valor você deseja receber por mês? Informe a renda mensal!";
+    // VALIDAÇÃO PERSONALIZADA: Campo de juros vazio ou zero
+    if (!campoTaxa || taxaNumerica === 0) {
+        msgErro.innerText = "⚠️ Por favor, informe a Taxa de Juros!";
         msgErro.classList.remove('hidden');
-        return; // Interrompe a execução
+        return; // Para a execução aqui
     }
 
-    if (!anosAposentadoria || anosAposentadoria <= 0) {
-        msgErro.innerText = "⚠️ Por quantos anos você pretende receber essa renda? Informe o tempo!";
-        msgErro.classList.remove('hidden');
-        return; // Interrompe a execução
-    }
+    const payload = {
+        C: limparParaNumero(document.getElementById('valor_inicial').value),
+        A: limparParaNumero(document.getElementById('valor_mensal').value),
+        taxa_juros: taxaNumerica,
+        T: parseInt(document.getElementById('periodo').value) || 0,
+        taxa_juros_mensal: document.getElementById('tipo_taxa').value === 'mensal',
+        tempo_mensal: document.getElementById('tipo_periodo').value === 'meses'
+    };
 
-    // Se passar pelas validações acima, o código continua para o fetch...
     try {
-        // Seu código de chamada para a API aqui
+        const response = await fetch('http://127.0.0.1:8000/calculadora', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error("Erro na resposta da API");
+
+        const data = await response.json();
+        exibirInterface(data);
+
     } catch (e) {
-        msgErro.innerText = "⚠️ Servidor offline. Ligue o backend para calcular!";
+        console.error(e);
+        // Mensagem de erro caso o servidor esteja offline
+        msgErro.innerText = "⚠️ Por favor, coloque um valor no campo 'Valor Inicial' ou 'Valor Mensal'";
         msgErro.classList.remove('hidden');
     }
 }

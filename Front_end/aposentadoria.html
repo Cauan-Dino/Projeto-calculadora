@@ -55,9 +55,13 @@
             </div>
         </div>
 
-        <button onclick="calcularAposentadoria()" class="btn-calc mt-8 w-full md:w-auto">
-            Calcular Patrimônio Necessário
-        </button>
+        <div class="flex flex-col md:flex-row items-center gap-4 mt-8">
+            <button onclick="calcularAposentadoria()" class="btn-calc w-full md:w-auto">
+                Calcular Patrimônio Necessário
+            </button>
+            
+            <span id="erro-aposentadoria" class="text-red-600 font-extrabold text-lg bg-red-50 px-4 py-2 rounded-md hidden text-center md:text-left"></span>
+        </div>
     </div>
 
     <div id="resultado-secao" class="hidden mt-8 space-y-4">
@@ -95,21 +99,32 @@
             </div>
 
             <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="p-5 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
-                    <h4 class="font-black text-emerald-600 uppercase text-xs mb-2">Renda Desejada</h4>
-                    <p class="text-sm text-gray-500">O valor líquido que você quer receber mensalmente para cobrir seu custo de vida.</p>
+                <div class="p-6 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
+                    <h4 class="font-black text-emerald-600 uppercase text-lg mb-3">💰 Renda Desejada</h4>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        O valor líquido que você quer receber mensalmente para cobrir seu custo de vida.
+                    </p>
                 </div>
-                <div class="p-5 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
-                    <h4 class="font-black text-emerald-600 uppercase text-xs mb-2">Anos de Usufruto</h4>
-                    <p class="text-sm text-gray-500">Período total em que você fará saques (ex: do início da aposentadoria até os 90-95 anos).</p>
+
+                <div class="p-6 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
+                    <h4 class="font-black text-emerald-600 uppercase text-lg mb-3">⏳ Anos de Usufruto</h4>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        Período total em que você fará saques (ex: do início da aposentadoria até os 90-95 anos).
+                    </p>
                 </div>
-                <div class="p-5 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
-                    <h4 class="font-black text-emerald-600 uppercase text-xs mb-2">Rendimento Bruto</h4>
-                    <p class="text-sm text-gray-500">A taxa de juros anual que sua carteira de investimentos rende antes de descontar a inflação.</p>
+
+                <div class="p-6 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
+                    <h4 class="font-black text-emerald-600 uppercase text-lg mb-3">📈 Rendimento Bruto</h4>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        A taxa de juros anual que sua carteira de investimentos rende antes de descontar a inflação.
+                    </p>
                 </div>
-                <div class="p-5 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
-                    <h4 class="font-black text-emerald-600 uppercase text-xs mb-2">Inflação Estimada</h4>
-                    <p class="text-sm text-gray-500">A projeção da alta de preços (IPCA). É o que define o quanto seu dinheiro precisa render para não desvalorizar.</p>
+
+                <div class="p-6 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
+                    <h4 class="font-black text-emerald-600 uppercase text-lg mb-3">🎈 Inflação Estimada</h4>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        A projeção da alta de preços (IPCA). É o que define o quanto seu dinheiro precisa render para não desvalorizar.
+                    </p>
                 </div>
             </div>
         </div>
@@ -139,9 +154,38 @@
 
         // 3. Função de cálculo conectada ao seu FastAPI
         async function calcularAposentadoria() {
+            const msgErro = document.getElementById('erro-aposentadoria');
+            const resultadoSecao = document.getElementById('resultado-secao');
+            
+            // Reseta visual inicial
+            msgErro.classList.add('hidden');
+            msgErro.innerText = "";
+            resultadoSecao.classList.add('hidden');
+
+            // Captura valores brutos para validar se o usuário deixou "0,00" ou vazio
+            const rendaRaw = document.getElementById('renda').value;
+            const tempoRaw = document.getElementById('tempo').value;
+            
+            const rendaNumerica = limparParaNumero(rendaRaw);
+            const tempoNumerico = parseInt(tempoRaw);
+
+            // VALIDAÇÕES PERSONALIZADAS (Prioridade: Renda depois Tempo)
+            if (!rendaRaw || rendaRaw === "0,00" || rendaNumerica <= 0) {
+                msgErro.innerHTML = "⚠️ Por favor, informe a Renda Mensal Desejada!";
+                msgErro.classList.remove('hidden');
+                return;
+            }
+
+            if (!tempoRaw || tempoRaw === "" || tempoNumerico <= 0) {
+                msgErro.innerHTML = "⚠️ Por favor, informe os Anos de Aposentadoria!";
+                msgErro.classList.remove('hidden');
+                return;
+            }
+
+            // Se passar pelas validações, monta o payload
             const payload = {
-                R: limparParaNumero(document.getElementById('renda').value),
-                T: parseInt(document.getElementById('tempo').value) || 0,
+                R: rendaNumerica,
+                T: tempoNumerico,
                 Rendimento_investimento: limparParaNumero(document.getElementById('rendimento').value),
                 I: limparParaNumero(document.getElementById('inflacao').value)
             };
@@ -156,18 +200,19 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    document.getElementById('resultado-secao').classList.remove('hidden');
+                    resultadoSecao.classList.remove('hidden');
                     document.getElementById('res-vp').innerText = `R$ ${data.valor_necessario_hoje.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
                     document.getElementById('res-taxa-mes').innerText = `${data["taxa_real_mensal_%"]}% ao mês`;
                     document.getElementById('res-total').innerText = `R$ ${data.total_recebido_no_periodo.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
                     
-                    // Scroll suave para o resultado
-                    document.getElementById('resultado-secao').scrollIntoView({ behavior: 'smooth' });
+                    resultadoSecao.scrollIntoView({ behavior: 'smooth' });
                 } else {
-                    alert("Erro: " + (data.detail || "Falha no cálculo"));
+                    msgErro.innerHTML = `⚠️ Erro: ${data.detail || "Falha no cálculo"}`;
+                    msgErro.classList.remove('hidden');
                 }
             } catch (error) {
-                alert("Servidor Offline! Verifique se o seu FastAPI está rodando.");
+                msgErro.innerHTML = "⚠️ Servidor Offline! Ligue o seu FastAPI.";
+                msgErro.classList.remove('hidden');
             }
         }
 
