@@ -36,6 +36,12 @@ def tabela_juros(body: Calculadora):
 
     i = body.taxa_juros / 100 # I = Taxa de juros em decimais
 
+    if i <= 0:
+        raise HTTPException(
+            status_code=400,
+            detail='Selecione uma taxa de juros!'
+        )
+
     if body.C == 0 and body.A == 0:
         raise HTTPException(status_code=400, detail='Opção inválida')
 

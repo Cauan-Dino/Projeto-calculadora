@@ -14,10 +14,9 @@
             border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        /* Título agora em PRETO conforme solicitado */
         h2 { 
             color: #000000 !important; 
-            font-weight: 800; /* Deixando um pouco mais negrito para destaque */
+            font-weight: 800; 
         }
 
         .input-field { 
@@ -26,41 +25,45 @@
         }
         .input-field:focus { border-color: #10B981; border-width: 2px; }
 
-        /* Botão Calcular: Verde com contorno Preto */
         .btn-calc { 
             background-color: #10B981; 
             color: white; 
             font-weight: bold; 
-            padding: 0.6rem 2rem; 
+            padding: 0.8rem 2.5rem; 
             border-radius: 0.375rem; 
-            border: 2px solid #000000; /* Contorno preto */
+            border: 2px solid #000000; 
             cursor: pointer;
             transition: all 0.2s;
             text-transform: uppercase;
+            display: inline-block;
         }
 
         .btn-calc:hover { 
             background-color: #059669; 
-            box-shadow: 4px 4px 0px #000000; /* Sombra sólida preta no hover */
+            box-shadow: 4px 4px 0px #000000; 
             transform: translate(-2px, -2px);
         }
 
-        /* Botão Ver Mais também seguindo o padrão */
-        #btn-ver-mais {
-            border: 2px solid #000000;
-            background-color: #10B981;
-            color: white;
-            border-radius: 9999px;
-            padding: 0.6rem 2rem;
-            font-weight: bold;
-            transition: all 0.2s;
+        .tabela-wrapper {
+            max-height: 400px;
+            overflow-y: auto;
+            overflow-x: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
         }
 
-        #btn-ver-mais:hover {
-            background-color: #059669;
-            box-shadow: 3px 3px 0px #000000;
+        .sticky-header th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #F9FAF7;
+            box-shadow: inset 0 -1px 0 #e5e7eb;
         }
 
+        .tabela-wrapper::-webkit-scrollbar { width: 8px; height: 8px; }
+        .tabela-wrapper::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .tabela-wrapper::-webkit-scrollbar-thumb { background: #10B981; border-radius: 10px; }
+        
         th { background-color: #F9FAF7; padding: 0.75rem; text-align: left; color: #4b5563; }
         td { padding: 0.75rem; border-top: 1px solid #e5e7eb; }
     </style>
@@ -68,7 +71,7 @@
 <body class="bg-gray-100 p-4 md:p-10">
     <div class="max-w-5xl mx-auto">
         <div class="card mb-8">
-            <h2 class="text-xl font-bold text-red-900 mb-6">Simulador de Juros Compostos</h2>
+            <h2 class="text-xl font-bold mb-6">Simulador de Juros Compostos</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-semibold mb-1">Valor inicial</label>
@@ -77,7 +80,6 @@
                         <input type="text" id="valor_inicial" class="input-field rounded-l-none js-money" value="0,00">
                     </div>
                 </div>
-
                 <div>
                     <label class="block text-sm font-semibold mb-1">Valor mensal</label>
                     <div class="flex">
@@ -85,7 +87,6 @@
                         <input type="text" id="valor_mensal" class="input-field rounded-l-none js-money" value="0,00">
                     </div>
                 </div>
-
                 <div>
                     <label class="block text-sm font-semibold mb-1">Taxa de juros</label>
                     <div class="flex">
@@ -97,7 +98,6 @@
                         </select>
                     </div>
                 </div>
-                
                 <div>
                     <label class="block text-sm font-semibold mb-1">Período</label>
                     <div class="flex">
@@ -109,14 +109,34 @@
                     </div>
                 </div>
             </div>
-            <button onclick="calcular()" class="btn-calc mt-6">Calcular</button>
+
+            <div class="flex flex-col md:flex-row items-center gap-4 mt-8">
+                <button onclick="calcular()" class="btn-calc w-full md:w-auto">
+                    Calcular
+                </button>
+                <span id="erro-mensagem" class="text-red-600 font-extrabold text-lg bg-red-50 px-3 py-1 rounded-md hidden"></span>
+            </div>
+        </div>
+
+        <div id="bloco-aposentadoria" class="card bg-gray-50 mb-8 border-l-4 border-emerald-500">
+            <h3 class="text-xl font-bold text-black mb-4 uppercase tracking-wide">Planejamento de Aposentadoria</h3>
+            <p class="text-gray-700 mb-6 leading-relaxed">
+                Esta calculadora ajuda você a descobrir o <strong>Valor Presente</strong> necessário para garantir uma renda mensal futura. 
+                Diferente dos juros compostos comuns, ela utiliza a <strong>Taxa Real</strong> (descontando a inflação).
+            </p>
+            
+            <div class="text-center">
+                <button onclick="irParaAposentadoria()" class="btn-calc">
+                    Acessar Calculadora de Aposentadoria
+                </button>
+            </div>
         </div>
 
         <div id="secao-resultados" class="hidden">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 <div class="card text-center">
                     <p class="text-gray-500 text-sm">Total em Juros</p>
-                    <p id="res-juros" class="text-2xl font-bold text-blue-300"></p>
+                    <p id="res-juros" class="text-2xl font-bold text-emerald-500"></p>
                 </div>
                 <div class="card text-center">
                     <p class="text-gray-500 text-sm">Valor Total Investido</p>
@@ -125,6 +145,24 @@
                 <div class="card text-center">
                     <p class="text-gray-500 text-sm">Valor Total Final</p>
                     <p id="res-final" class="text-2xl font-bold text-gray-800"></p>
+                </div>
+            </div>
+
+            <div class="card mb-8">
+                <h3 class="font-bold border-b pb-2 mb-4 uppercase text-xs tracking-wider text-gray-500">Tabela</h3>
+                <div class="tabela-wrapper">
+                    <table class="w-full">
+                        <thead class="sticky-header">
+                            <tr>
+                                <th>Mês</th>
+                                <th>Juros</th>
+                                <th>Total Investido</th>
+                                <th>Total Juros</th>
+                                <th>Total Acumulado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-corpo"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -139,29 +177,10 @@
                     </div>
                 </div>
             </div>
-
-            <div class="card overflow-x-auto">
-                <h3 class="font-bold border-b pb-2 mb-4 uppercase text-xs tracking-wider text-gray-500">Tabela</h3>
-                <table class="w-full">
-                    <thead>
-                        <tr>
-                            <th>Meses</th>
-                            <th>Juros</th>
-                            <th>Total Investido</th>
-                            <th>Total Juros</th>
-                            <th>Acumulado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabela-corpo"></tbody>
-                </table>
-                <div id="wrapper-ver-mais" class="mt-6 text-center hidden">
-                    <button id="btn-ver-mais" onclick="toggleTabela()" 
-                        class="inline-block border-2 border-red-900 text-red-900 font-bold py-2 px-8 rounded-full hover:bg-red-900 hover:text-white transition-all duration-300 text-sm uppercase tracking-wide">
-                        Visualizar tabela completa
-                    </button>
-                </div>
-            </div>
         </div>
+
+        <div id="destino-aposentadoria-final" class="mt-8"></div>
+    </div> 
     <script src="script.js"></script>
 </body>
 </html>
