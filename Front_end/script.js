@@ -174,21 +174,27 @@ function renderizarGraficos(data) {
 }
 
 function exibirResultados(resultado) {
-    // Note que agora acessamos 'resultado.resumo'
-    const resumo = resultado.resumo;
+    // Como o Python enviou um objeto chamado 'resumo', precisamos entrar nele
+    const dados = resultado.resumo;
 
+    // Verificamos se o elemento existe antes de tentar escrever nele
     if (document.getElementById('total-acumulado')) {
-        // No Python você chamou de 'valor_final'
-        document.getElementById('total-acumulado').innerText = `R$ ${resumo.valor_final.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        document.getElementById('total-acumulado').innerText = 
+            `R$ ${dados.valor_final.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
     }
     
     if (document.getElementById('total-investido')) {
-        document.getElementById('total-investido').innerText = `R$ ${resumo.total_investido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        document.getElementById('total-investido').innerText = 
+            `R$ ${dados.total_investido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
     }           
 
     if (document.getElementById('total-juros')) {
-        document.getElementById('total-juros').innerText = `R$ ${resumo.total_juros.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        document.getElementById('total-juros').innerText = 
+            `R$ ${dados.total_juros.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
     }
+
+    // Opcional: Mostra no console a tabela para conferência
+    console.table(resultado.tabela);
 }
 
 // --- 5. INICIALIZAÇÃO E NAVEGAÇÃO ---
