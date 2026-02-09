@@ -43,9 +43,10 @@ async function calcular() {
     if (!campoTaxa || taxaNumerica === 0) {
         msgErro.innerText = "⚠️ Por favor, informe a Taxa de Juros!";
         msgErro.classList.remove('hidden');
-        return; // Para a execução aqui
+        return; 
     }
 
+    // Cria o objeto com os dados (Payload)
     const payload = {
         C: limparParaNumero(document.getElementById('valor_inicial').value),
         A: limparParaNumero(document.getElementById('valor_mensal').value),
@@ -55,23 +56,34 @@ async function calcular() {
         tempo_mensal: document.getElementById('tipo_periodo').value === 'meses'
     };
 
+    // 1. Defina a URL gerada pelo Render
+    // Lembre-se de trocar "projeto-calculadora-abc1" pela sua URL real do painel do Render
+    const urldaAPI = "https://projeto-calculadora-1lgh.onrender.com/calcular";
+
     try {
-        const response = await fetch('http://127.0.0.1:8000/calculadora', {
+        // Mostra um aviso opcional de "Carregando..." se desejar
+        
+        // 2. Faz a chamada para a API utilizando o payload correto
+        const response = await fetch(urldaAPI, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload) 
         });
 
-        if (!response.ok) throw new Error("Erro na resposta da API");
+        if (!response.ok) {
+            throw new Error(`Erro no servidor: ${response.status}`);
+        }
 
-        const data = await response.json();
-        exibirInterface(data);
-
-    } catch (e) {
-        console.error(e);
-        // Mensagem de erro caso o servidor esteja offline
-        msgErro.innerText = "⚠️ Por favor, coloque um valor no campo 'Valor Inicial' ou 'Valor Mensal'";
-        msgErro.classList.remove('hidden');
+        const resultado = await response.json();
+        
+        console.log("Valores reais:", JSON.stringify(resultado));
+        exibirInterface(resultado); // Esta função chama os gráficos e a tabela
+        
+    } catch (error) {
+        console.error("Erro ao conectar com a API:", error);
+        alert("O servidor está iniciando (plano gratuito). Aguarde cerca de 50 segundos e clique em calcular novamente.");
     }
 }
 
@@ -160,6 +172,48 @@ function renderizarGraficos(data) {
     });
 }
 
+function exibirResultados(resultado) {
+    // 1. Torna a seção de resultados visível
+    document.getElementById('secao-resultados').classList.remove('hidden');
+
+    // 2. Entra na pasta 'resumo' vinda do Python
+    const resumo = resultado.resumo;
+
+    // 3. Preenche os campos usando os IDs REAIS do seu HTML
+    if (document.getElementById('res-juros')) {
+        document.getElementById('res-juros').innerText = 
+            `R$ ${resumo.total_juros.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    }
+    
+    if (document.getElementById('res-investido')) {
+        document.getElementById('res-investido').innerText = 
+            `R$ ${resumo.total_investido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    }           
+
+    if (document.getElementById('res-final')) {
+        document.getElementById('res-final').innerText = 
+            `R$ ${resumo.valor_final.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    }
+
+    // 4. Preenche a tabela (opcional, mas já que o back envia, vamos usar!)
+    const corpoTabela = document.getElementById('tabela-corpo');
+    if (corpoTabela) {
+        corpoTabela.innerHTML = ""; // Limpa a tabela anterior
+        resultado.tabela.forEach(item => {
+            const linha = `
+                <tr>
+                    <td>${item.mes}</td>
+                    <td>R$ ${item.juros_mes.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td>R$ ${item.total_investido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td>R$ ${item.juros_acumlado.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td>R$ ${item.saldo_acumulado.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                </tr>
+            `;
+            corpoTabela.innerHTML += linha;
+        });
+    }
+}
+
 // --- 5. INICIALIZAÇÃO E NAVEGAÇÃO ---
 
 function irParaAposentadoria() {
@@ -192,4 +246,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Garante que as máscaras funcionem assim que o site abrir
 document.addEventListener('DOMContentLoaded', configurarMascaras);
-

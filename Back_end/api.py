@@ -8,10 +8,12 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"], # Permite que o site do Netlify acesse o Render
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Criacao do body
 
@@ -31,7 +33,7 @@ class CalculadoraAposentadoria(BaseModel):
 
 
 # Calculadora de juros compostos
-@app.post('/calculadora')
+@app.post('/calcular')
 def tabela_juros(body: Calculadora):
 
     i = body.taxa_juros / 100 # I = Taxa de juros em decimais
@@ -88,7 +90,7 @@ def tabela_juros(body: Calculadora):
     }
 
 # Calculadora que mostra quanto o usuario precisa para se aposentar
-@app.post('/aposentadoria-calculadora')
+@app.post('/calculadora-aposentadoria')
 def aposentadoria_calculadora(body:CalculadoraAposentadoria):
     # Verificando se o usuario colocou algo no campo R e T
     if body.R <= 0 or body.T <= 0:

@@ -3,17 +3,19 @@ name = "cursoebac"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "Your Name",email = "you@example.com"}
+    {name = "Your Name", email = "you@example.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = [
-    "fastapi[standard] (>=0.124.4,<0.125.0)",
-    "sqlalchemy (>=2.0.45,<3.0.0)",
-    "aiosqlite (>=0.22.1,<0.23.0)"
-]
+# REMOVA A LINHA DE DEPENDENCIES DAQUI!
 
+[tool.poetry]
+package-mode = false
 
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.poetry.dependencies]
+python = ">=3.13"
+fastapi = {extras = ["standard"], version = "^0.115.0"} 
+uvicorn = "^0.30.0"
+gunicorn = "^23.0.0"
+sqlalchemy = "^2.0.0"
+aiosqlite = "^0.20.0"
