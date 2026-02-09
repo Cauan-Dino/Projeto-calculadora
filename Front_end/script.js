@@ -79,7 +79,7 @@ async function calcular() {
         const resultado = await response.json();
         
         // 3. Exibição dos resultados (Exemplo)
-        console.log("Resultado recebido:", resultado);
+        console.log("Valores reais:", JSON.stringify(resultado));
         exibirResultados(resultado); // Certifique-se de que essa função existe
         
     } catch (error) {
@@ -182,7 +182,7 @@ function exibirResultados(resultado) {
     
     if (document.getElementById('total-investido')) {
         document.getElementById('total-investido').innerText = `R$ ${resultado.total_investido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-    }
+    }           
 
     if (document.getElementById('total-juros')) {
         document.getElementById('total-juros').innerText = `R$ ${resultado.total_juros.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
