@@ -174,23 +174,44 @@ function renderizarGraficos(data) {
 }
 
 function exibirResultados(resultado) {
-    // 1. Entramos na "pasta" resumo que o Python enviou
-    const dadosParaExibir = resultado.resumo;
+    // 1. Torna a seção de resultados visível
+    document.getElementById('secao-resultados').classList.remove('hidden');
 
-    // 2. Agora usamos os nomes exatos que estão no seu api.py
-    if (document.getElementById('total-acumulado')) {
-        document.getElementById('total-acumulado').innerText = 
-            `R$ ${dadosParaExibir.valor_final.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    // 2. Entra na pasta 'resumo' vinda do Python
+    const resumo = resultado.resumo;
+
+    // 3. Preenche os campos usando os IDs REAIS do seu HTML
+    if (document.getElementById('res-juros')) {
+        document.getElementById('res-juros').innerText = 
+            `R$ ${resumo.total_juros.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
     }
     
-    if (document.getElementById('total-investido')) {
-        document.getElementById('total-investido').innerText = 
-            `R$ ${dadosParaExibir.total_investido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    if (document.getElementById('res-investido')) {
+        document.getElementById('res-investido').innerText = 
+            `R$ ${resumo.total_investido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
     }           
 
-    if (document.getElementById('total-juros')) {
-        document.getElementById('total-juros').innerText = 
-            `R$ ${dadosParaExibir.total_juros.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    if (document.getElementById('res-final')) {
+        document.getElementById('res-final').innerText = 
+            `R$ ${resumo.valor_final.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    }
+
+    // 4. Preenche a tabela (opcional, mas já que o back envia, vamos usar!)
+    const corpoTabela = document.getElementById('tabela-corpo');
+    if (corpoTabela) {
+        corpoTabela.innerHTML = ""; // Limpa a tabela anterior
+        resultado.tabela.forEach(item => {
+            const linha = `
+                <tr>
+                    <td>${item.mes}</td>
+                    <td>R$ ${item.juros_mes.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td>R$ ${item.total_investido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td>R$ ${item.juros_acumlado.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td>R$ ${item.saldo_acumulado.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                </tr>
+            `;
+            corpoTabela.innerHTML += linha;
+        });
     }
 }
 
