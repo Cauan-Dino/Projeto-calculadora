@@ -43,9 +43,10 @@ async function calcular() {
     if (!campoTaxa || taxaNumerica === 0) {
         msgErro.innerText = "⚠️ Por favor, informe a Taxa de Juros!";
         msgErro.classList.remove('hidden');
-        return; // Para a execução aqui
+        return; 
     }
 
+    // Cria o objeto com os dados (Payload)
     const payload = {
         C: limparParaNumero(document.getElementById('valor_inicial').value),
         A: limparParaNumero(document.getElementById('valor_mensal').value),
@@ -55,23 +56,35 @@ async function calcular() {
         tempo_mensal: document.getElementById('tipo_periodo').value === 'meses'
     };
 
+    // 1. Defina a URL gerada pelo Render
+    // Lembre-se de trocar "projeto-calculadora-abc1" pela sua URL real do painel do Render
+    const urldaAPI = "https://projeto-calculadora-abc1.onrender.com/calcular"; 
+
     try {
-        const response = await fetch('http://127.0.0.1:8000/calculadora', {
+        // Mostra um aviso opcional de "Carregando..." se desejar
+        
+        // 2. Faz a chamada para a API utilizando o payload correto
+        const response = await fetch(urldaAPI, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload) // Corrigido de 'dados' para 'payload'
         });
 
-        if (!response.ok) throw new Error("Erro na resposta da API");
+        if (!response.ok) {
+            throw new Error(`Erro no servidor: ${response.status}`);
+        }
 
-        const data = await response.json();
-        exibirInterface(data);
-
-    } catch (e) {
-        console.error(e);
-        // Mensagem de erro caso o servidor esteja offline
-        msgErro.innerText = "⚠️ Por favor, coloque um valor no campo 'Valor Inicial' ou 'Valor Mensal'";
-        msgErro.classList.remove('hidden');
+        const resultado = await response.json();
+        
+        // 3. Exibição dos resultados (Exemplo)
+        console.log("Resultado recebido:", resultado);
+        exibirResultados(resultado); // Certifique-se de que essa função existe
+        
+    } catch (error) {
+        console.error("Erro ao conectar com a API:", error);
+        alert("O servidor está iniciando (plano gratuito). Aguarde cerca de 50 segundos e clique em calcular novamente.");
     }
 }
 
@@ -192,4 +205,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Garante que as máscaras funcionem assim que o site abrir
 document.addEventListener('DOMContentLoaded', configurarMascaras);
-
