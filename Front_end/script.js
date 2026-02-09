@@ -78,9 +78,8 @@ async function calcular() {
 
         const resultado = await response.json();
         
-        // 3. Exibição dos resultados (Exemplo)
         console.log("Valores reais:", JSON.stringify(resultado));
-        exibirResultados(resultado); // Certifique-se de que essa função existe
+        exibirInterface(resultado); // Esta função chama os gráficos e a tabela
         
     } catch (error) {
         console.error("Erro ao conectar com a API:", error);
