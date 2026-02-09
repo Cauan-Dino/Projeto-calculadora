@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Aposentadoria - Valor Presente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #F3F4F6; }
+        .card { background: white; padding: 2rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; }
+        .input-field { border: 1px solid #D1D5DB; border-radius: 0.375rem; padding: 0.5rem; width: 100%; outline: none; }
+        .input-field:focus { border-color: #10B981; border-width: 2px; }
+        .btn-calc { 
+            background-color: #10B981; color: white; font-weight: bold; padding: 0.8rem 2rem;
+            border-radius: 0.375rem; border: 2px solid #000; cursor: pointer; transition: 0.2s;
+        }
+        .btn-calc:hover { box-shadow: 4px 4px 0px #000; transform: translate(-2px, -2px); }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+    <div class="max-w-4xl mx-auto">
+    <a href="index.html" class="text-sm font-bold text-gray-500 hover:text-black mb-6 inline-block">← VOLTAR PARA JUROS COMPOSTOS</a>
+
+    <div class="card border-t-4 border-black">
+        <h2 class="text-2xl font-black mb-6 uppercase">Quanto preciso para me aposentar?</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-bold mb-1">Renda Mensal Desejada (R$)</label>
+                <div class="flex">
+                    <span class="bg-gray-200 p-2 border border-r-0 rounded-l-md text-sm text-gray-600 font-bold">R$</span>
+                    <input type="text" id="renda" class="input-field rounded-l-none js-money" value="0,00">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold mb-1">Anos de Aposentadoria (T)</label>
+                <input type="number" id="tempo" class="input-field" value="25">
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold mb-1">Rendimento Bruto (% ao ano)</label>
+                <div class="flex">
+                    <span class="bg-gray-200 p-2 border border-r-0 rounded-l-md text-sm text-gray-600 font-bold">%</span>
+                    <input type="text" id="rendimento" class="input-field rounded-l-none js-money" value="0,00">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold mb-1">Inflação Estimada (% ao ano)</label>
+                <div class="flex">
+                    <span class="bg-gray-200 p-2 border border-r-0 rounded-l-md text-sm text-gray-600 font-bold">%</span>
+                    <input type="text" id="inflacao" class="input-field rounded-l-none js-money" value="0,00">
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row items-center gap-4 mt-8">
+            <button onclick="calcularAposentadoria()" class="btn-calc w-full md:w-auto">
+                Calcular Patrimônio Necessário
+            </button>
+            
+            <span id="erro-aposentadoria" class="text-red-600 font-extrabold text-lg bg-red-50 px-4 py-2 rounded-md hidden text-center md:text-left"></span>
+        </div>
+    </div>
+
+    <div id="resultado-secao" class="hidden mt-8 space-y-4">
+        <div class="card bg-black text-white p-8 text-center border-none shadow-xl">
+            <p class="text-emerald-400 text-xs font-bold uppercase tracking-widest mb-2">Você precisará acumular hoje:</p>
+            <h3 id="res-vp" class="text-4xl font-black text-white">R$ 0,00</h3>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="card p-4 border-l-4 border-emerald-500 shadow-sm"><p class="text-gray-500 text-xs font-bold uppercase">Taxa Real Mensal</p><p id="res-taxa-mes" class="text-xl font-bold"></p></div>
+            <div class="card p-4 border-l-4 border-emerald-500 shadow-sm"><p class="text-gray-500 text-xs font-bold uppercase">Total Recebido no Período</p><p id="res-total" class="text-xl font-bold"></p></div>
+        </div>
+    </div>
+
+    <div class="mt-16 bg-white rounded-xl p-8 border border-gray-200 shadow-sm mb-20">
+        <div class="flex items-center gap-4 mb-8">
+            <div class="h-1 w-12 bg-emerald-500"></div>
+            <h3 class="text-2xl font-black uppercase text-gray-800 tracking-tight">Guia de Utilização</h3>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <div class="space-y-6 lg:col-span-1">
+                <section>
+                    <p class="text-lg font-bold text-black mb-3 italic">"Quanto vale o meu dinheiro amanhã?"</p>
+                    <p class="text-gray-600 leading-relaxed text-base">
+                        Esta calculadora utiliza o conceito de <strong>Taxa Real</strong>. Diferente de investimentos comuns, aqui descontamos a inflação para garantir que sua renda mensal tenha o mesmo poder de compra de hoje até o último dia da simulação.
+                    </p>
+                </section>
+                <section class="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
+                    <p class="font-bold text-emerald-800 text-sm uppercase mb-2">Dica de Especialista</p>
+                    <p class="text-emerald-700 text-sm leading-relaxed">
+                        Ao planejar, considere uma inflação média histórica (ex: 4,5% a 6% no Brasil) para ter uma margem de segurança realista.
+                    </p>
+                </section>
+            </div>
+
+            <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-6 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
+                    <h4 class="font-black text-emerald-600 uppercase text-lg mb-3">💰 Renda Desejada</h4>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        O valor líquido que você quer receber mensalmente para cobrir seu custo de vida.
+                    </p>
+                </div>
+
+                <div class="p-6 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
+                    <h4 class="font-black text-emerald-600 uppercase text-lg mb-3">⏳ Anos de Usufruto</h4>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        Período total em que você fará saques (ex: do início da aposentadoria até os 90-95 anos).
+                    </p>
+                </div>
+
+                <div class="p-6 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
+                    <h4 class="font-black text-emerald-600 uppercase text-lg mb-3">📈 Rendimento Bruto</h4>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        A taxa de juros anual que sua carteira de investimentos rende antes de descontar a inflação.
+                    </p>
+                </div>
+
+                <div class="p-6 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
+                    <h4 class="font-black text-emerald-600 uppercase text-lg mb-3">🎈 Inflação Estimada</h4>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        A projeção da alta de preços (IPCA). É o que define o quanto seu dinheiro precisa render para não desvalorizar.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script>
+        // 1. Função para limpar a formatação antes de enviar para o Python (Ex: "1.500,50" -> 1500.50)
+        function limparParaNumero(str) {
+            if (!str) return 0;
+            return parseFloat(str.replace(/\./g, "").replace(",", "."));
+        }
+
+        // 2. Função da Máscara (Formata 0,00 enquanto digita)
+        function configurarMascaras() {
+            const camposMoeda = document.querySelectorAll('.js-money');
+            camposMoeda.forEach(input => {
+                input.addEventListener('input', (e) => {
+                    let value = e.target.value.replace(/\D/g, ""); // Remove tudo que não é número
+                    value = (value / 100).toFixed(2) + ""; // Divide por 100 para centavos
+                    value = value.replace(".", ","); // Troca ponto por vírgula decimal
+                    value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1."); // Adiciona pontos de milhar
+                    e.target.value = value === "NaN" ? "0,00" : value;
+                });
+            });
+        }
+
+        // 3. Função de cálculo conectada ao seu FastAPI
+        async function calcularAposentadoria() {
+            const msgErro = document.getElementById('erro-aposentadoria');
+            const resultadoSecao = document.getElementById('resultado-secao');
+            
+            // Reseta visual inicial
+            msgErro.classList.add('hidden');
+            msgErro.innerText = "";
+            resultadoSecao.classList.add('hidden');
+
+            // Captura valores brutos para validar se o usuário deixou "0,00" ou vazio
+            const rendaRaw = document.getElementById('renda').value;
+            const tempoRaw = document.getElementById('tempo').value;
+            
+            const rendaNumerica = limparParaNumero(rendaRaw);
+            const tempoNumerico = parseInt(tempoRaw);
+
+            // VALIDAÇÕES PERSONALIZADAS (Prioridade: Renda depois Tempo)
+            if (!rendaRaw || rendaRaw === "0,00" || rendaNumerica <= 0) {
+                msgErro.innerHTML = "⚠️ Por favor, informe a Renda Mensal Desejada!";
+                msgErro.classList.remove('hidden');
+                return;
+            }
+
+            if (!tempoRaw || tempoRaw === "" || tempoNumerico <= 0) {
+                msgErro.innerHTML = "⚠️ Por favor, informe os Anos de Aposentadoria!";
+                msgErro.classList.remove('hidden');
+                return;
+            }
+
+            // Se passar pelas validações, monta o payload
+            const payload = {
+                R: rendaNumerica,
+                T: tempoNumerico,
+                Rendimento_investimento: limparParaNumero(document.getElementById('rendimento').value),
+                I: limparParaNumero(document.getElementById('inflacao').value)
+            };
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/aposentadoria-calculadora', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultadoSecao.classList.remove('hidden');
+                    document.getElementById('res-vp').innerText = `R$ ${data.valor_necessario_hoje.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+                    document.getElementById('res-taxa-mes').innerText = `${data["taxa_real_mensal_%"]}% ao mês`;
+                    document.getElementById('res-total').innerText = `R$ ${data.total_recebido_no_periodo.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+                    
+                    resultadoSecao.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    msgErro.innerHTML = `⚠️ Erro: ${data.detail || "Falha no cálculo"}`;
+                    msgErro.classList.remove('hidden');
+                }
+            } catch (error) {
+                msgErro.innerHTML = "⚠️ Servidor Offline! Ligue o seu FastAPI.";
+                msgErro.classList.remove('hidden');
+            }
+        }
+
+        // Inicializa a máscara quando a página termina de carregar
+        document.addEventListener('DOMContentLoaded', configurarMascaras);
+    </script>
+</body>
+</html>

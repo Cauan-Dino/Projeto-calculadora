@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  backend:
+    image: localhost/calculadora-back:latest
+    build: ./Back_end
+    container_name: backend-calculadora
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Back_end:/app
+    command: ["poetry", "run", "uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+  frontend:
+    image: localhost/calculadora-front:latest
+    build: ./Front_end
+    container_name: frontend-calculadora
+    ports:
+      - "8080:80"
+    volumes:
+      - ./Front_end:/usr/share/nginx/html
