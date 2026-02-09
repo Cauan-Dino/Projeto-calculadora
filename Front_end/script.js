@@ -58,7 +58,7 @@ async function calcular() {
 
     // 1. Defina a URL gerada pelo Render
     // Lembre-se de trocar "projeto-calculadora-abc1" pela sua URL real do painel do Render
-    const urldaAPI = "https://projeto-calculadora-abc1.onrender.com/calcular"; 
+    const urldaAPI = "https://projeto-calculadora-1lgh.onrender.com/calcular";
 
     try {
         // Mostra um aviso opcional de "Carregando..." se desejar
@@ -69,7 +69,7 @@ async function calcular() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(payload) // Corrigido de 'dados' para 'payload'
+            body: JSON.stringify(payload) 
         });
 
         if (!response.ok) {
@@ -171,6 +171,22 @@ function renderizarGraficos(data) {
             scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
         }
     });
+}
+
+function exibirResultados(resultado) {
+    // Exemplo de como preencher os campos na tela
+    // Certifique-se de que esses IDs existam no seu HTML
+    if (document.getElementById('total-acumulado')) {
+        document.getElementById('total-acumulado').innerText = `R$ ${resultado.total_acumulado.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    }
+    
+    if (document.getElementById('total-investido')) {
+        document.getElementById('total-investido').innerText = `R$ ${resultado.total_investido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    }
+
+    if (document.getElementById('total-juros')) {
+        document.getElementById('total-juros').innerText = `R$ ${resultado.total_juros.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    }
 }
 
 // --- 5. INICIALIZAÇÃO E NAVEGAÇÃO ---
