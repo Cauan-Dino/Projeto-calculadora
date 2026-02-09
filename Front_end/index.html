@@ -7,6 +7,41 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+
+            /* Variáveis de transição suave */
+    body { transition: background-color 0.3s, color 0.3s; }
+
+    /* Estilos do Modo Escuro */
+    body.dark-mode {
+        background-color: #111827; /* Gray 900 */
+        color: #F9FAFB;
+    }
+
+    body.dark-mode .card {
+        background-color: #1F2937; /* Gray 800 */
+        border-color: #374151;
+        color: #F9FAFB;
+    }
+
+    body.dark-mode .input-field {
+        background-color: #374151;
+        border-color: #4B5563;
+        color: white;
+    }
+
+    body.dark-mode label, body.dark-mode p {
+        color: #D1D5DB;
+    }
+
+    body.dark-mode h2, body.dark-mode h3, body.dark-mode .text-black {
+        color: #FFFFFF !important;
+    }
+
+    /* Ajuste para o card de resultado preto não sumir */
+    body.dark-mode .bg-black {
+        border: 1px solid #374151;
+    }
+
         body { background-color: #F3F4F6; }
 
         .card { 
@@ -69,6 +104,11 @@
     </style>
 </head>
 <body class="bg-gray-100 p-4 md:p-10">
+    <div class="fixed top-4 right-4 z-50">
+        <button onclick="toggleDarkMode()" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 transition-all border-2 border-black shadow-[4px_4px_0px_#000]">
+            <span id="dark-icon" class="text-xl">🌙</span>
+        </button>
+    </div>
     <div class="max-w-5xl mx-auto">
         <div class="card mb-8">
             <h2 class="text-xl font-bold mb-6">Simulador de Juros Compostos</h2>

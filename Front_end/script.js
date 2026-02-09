@@ -167,5 +167,29 @@ function irParaAposentadoria() {
     window.location.href = 'aposentadoria.html'; 
 }
 
+function toggleDarkMode() {
+    const body = document.body;
+    const icon = document.getElementById('dark-icon');
+    
+    body.classList.toggle('dark-mode');
+    
+    if (body.classList.contains('dark-mode')) {
+        icon.innerText = "☀️";
+        localStorage.setItem('theme', 'dark');
+    } else {
+        icon.innerText = "🌙";
+        localStorage.setItem('theme', 'light');
+    }
+}
+
+// Verifica se o usuário já tinha uma preferência salva ao carregar a página
+document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('dark-icon').innerText = "☀️";
+    }
+});
+
 // Garante que as máscaras funcionem assim que o site abrir
 document.addEventListener('DOMContentLoaded', configurarMascaras);
+
