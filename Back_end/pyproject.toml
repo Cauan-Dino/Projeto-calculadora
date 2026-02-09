@@ -7,23 +7,15 @@ authors = [
 ]
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = [
-    "fastapi[standard] (>=0.124.4,<0.125.0)",
-    "sqlalchemy (>=2.0.45,<3.0.0)",
-    "aiosqlite (>=0.22.1,<0.23.0)",
-    "uvicorn (>=0.22.0)",
-    "gunicorn (>=21.2.0)"
-]
-
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+# REMOVA A LINHA DE DEPENDENCIES DAQUI!
 
 [tool.poetry]
-package-mode = false  
+package-mode = false
 
 [tool.poetry.dependencies]
-python = ">=3.13"  
-fastapi = "^0.100.0"
-uvicorn = "^0.22.0"
-gunicorn = "^21.2.0"
+python = ">=3.13"
+fastapi = {extras = ["standard"], version = "^0.115.0"} 
+uvicorn = "^0.30.0"
+gunicorn = "^23.0.0"
+sqlalchemy = "^2.0.0"
+aiosqlite = "^0.20.0"
