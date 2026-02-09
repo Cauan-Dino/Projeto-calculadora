@@ -6,6 +6,78 @@
     <title>Cálculo de Aposentadoria - Valor Presente</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        
+        
+        /* Transição suave para a troca de tema */
+        body { transition: background-color 0.3s, color 0.3s; }
+
+        /* Configurações do Dark Mode */
+        body.dark-mode {
+            background-color: #111827; /* Fundo Cinza Escuro */
+            color: #F9FAFB;
+        }
+
+        body.dark-mode .card {
+            background-color: #1F2937; /* Cards Cinza Médio */
+            border-color: #374151;
+            color: #F9FAFB;
+        }
+
+        body.dark-mode .input-field {
+            background-color: #374151;
+            border-color: #4B5563;
+            color: white;
+        }
+
+        /* Ajuste para textos e labels */
+        body.dark-mode label, 
+        body.dark-mode p.text-gray-500, 
+        body.dark-mode p.text-gray-600 {
+            color: #D1D5DB !important;
+        }
+
+        body.dark-mode h2, 
+        body.dark-mode h3, 
+        body.dark-mode h4 {
+            color: #FFFFFF !important;
+        }
+
+        /* Garante que o card de resultado preto continue visível */
+        body.dark-mode .bg-black {
+            border: 1px solid #10B981;
+        }
+        /* Correções específicas para o Modo Escuro */
+        body.dark-mode .bg-white {
+            background-color: #1F2937 !important; /* Gray 800 */
+        }
+
+        body.dark-mode .text-gray-600, 
+        body.dark-mode .text-gray-500 {
+            color: #E5E7EB !important; /* Gray 200 para contraste */
+        }
+
+        body.dark-mode .border-gray-100, 
+        body.dark-mode .border-gray-200 {
+            border-color: #374151 !important;
+        }
+
+        body.dark-mode .hover\:bg-gray-50:hover {
+            background-color: #374151 !important;
+        }
+
+        /* Garante que o texto dentro dos mini-cards explicativos brilhe */
+        body.dark-mode .grid p {
+            color: #D1D5DB !important;
+        }
+        
+                /* Força cores específicas no Dark Mode para o card de dica */
+        body.dark-mode .text-emerald-900 {
+            color: #d1fae5 !important; /* emerald-100 */
+        }
+        body.dark-mode .text-emerald-700 {
+            color: #34d399 !important; /* emerald-400 */
+        }
+
         body { background-color: #F3F4F6; }
         .card { background: white; padding: 2rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; }
         .input-field { border: 1px solid #D1D5DB; border-radius: 0.375rem; padding: 0.5rem; width: 100%; outline: none; }
@@ -18,6 +90,11 @@
     </style>
 </head>
 <body class="p-4 md:p-10">
+    <div class="fixed top-4 right-4 z-50">
+        <button onclick="toggleDarkMode()" class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 transition-all border-2 border-black shadow-[4px_4px_0px_#000]">
+            <span id="dark-icon" class="text-xl">🌙</span>
+        </button>
+    </div>
     <div class="max-w-4xl mx-auto">
     <a href="index.html" class="text-sm font-bold text-gray-500 hover:text-black mb-6 inline-block">← VOLTAR PARA JUROS COMPOSTOS</a>
 
@@ -75,7 +152,7 @@
             <div class="card p-4 border-l-4 border-emerald-500 shadow-sm"><p class="text-gray-500 text-xs font-bold uppercase">Total Recebido no Período</p><p id="res-total" class="text-xl font-bold"></p></div>
         </div>
     </div>
-
+    
     <div class="mt-16 bg-white rounded-xl p-8 border border-gray-200 shadow-sm mb-20">
         <div class="flex items-center gap-4 mb-8">
             <div class="h-1 w-12 bg-emerald-500"></div>
@@ -90,12 +167,22 @@
                         Esta calculadora utiliza o conceito de <strong>Taxa Real</strong>. Diferente de investimentos comuns, aqui descontamos a inflação para garantir que sua renda mensal tenha o mesmo poder de compra de hoje até o último dia da simulação.
                     </p>
                 </section>
-                <section class="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
-                    <p class="font-bold text-emerald-800 text-sm uppercase mb-2">Dica de Especialista</p>
-                    <p class="text-emerald-700 text-sm leading-relaxed">
+                    <section class="p-4 rounded-lg border-2 transition-all duration-300 
+                    bg-emerald-50 border-emerald-200 
+                    dark:bg-emerald-950/40 dark:border-emerald-500/50">
+        
+                    <p class="font-black text-sm uppercase mb-2 
+                            text-emerald-700 
+                            dark:text-emerald-400">
+                        Dica de Especialista
+                    </p>
+                    
+                    <p class="text-sm leading-relaxed font-medium
+                            text-emerald-900
+                            dark:text-gray-700">
                         Ao planejar, considere uma inflação média histórica (ex: 4,5% a 6% no Brasil) para ter uma margem de segurança realista.
                     </p>
-                </section>
+            </section>
             </div>
 
             <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -215,6 +302,27 @@
                 msgErro.classList.remove('hidden');
             }
         }
+        function toggleDarkMode() {
+            const body = document.body;
+            const icon = document.getElementById('dark-icon');
+            
+            body.classList.toggle('dark-mode');
+            
+            const isDark = body.classList.contains('dark-mode');
+            icon.innerText = isDark ? "☀️" : "🌙";
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        // Carregar preferência ao iniciar
+        document.addEventListener('DOMContentLoaded', () => {
+            configurarMascaras(); // Sua função já existente
+            
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                const icon = document.getElementById('dark-icon');
+                if(icon) icon.innerText = "☀️";
+            }
+        });
 
         // Inicializa a máscara quando a página termina de carregar
         document.addEventListener('DOMContentLoaded', configurarMascaras);
