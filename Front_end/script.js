@@ -174,18 +174,20 @@ function renderizarGraficos(data) {
 }
 
 function exibirResultados(resultado) {
-    // Exemplo de como preencher os campos na tela
-    // Certifique-se de que esses IDs existam no seu HTML
+    // Note que agora acessamos 'resultado.resumo'
+    const resumo = resultado.resumo;
+
     if (document.getElementById('total-acumulado')) {
-        document.getElementById('total-acumulado').innerText = `R$ ${resultado.total_acumulado.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        // No Python você chamou de 'valor_final'
+        document.getElementById('total-acumulado').innerText = `R$ ${resumo.valor_final.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
     }
     
     if (document.getElementById('total-investido')) {
-        document.getElementById('total-investido').innerText = `R$ ${resultado.total_investido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        document.getElementById('total-investido').innerText = `R$ ${resumo.total_investido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
     }           
 
     if (document.getElementById('total-juros')) {
-        document.getElementById('total-juros').innerText = `R$ ${resultado.total_juros.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        document.getElementById('total-juros').innerText = `R$ ${resumo.total_juros.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
     }
 }
 
