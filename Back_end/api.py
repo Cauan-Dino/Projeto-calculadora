@@ -8,7 +8,8 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=["*"], # Permite que o site do Netlify acesse o Render
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -32,7 +33,7 @@ class CalculadoraAposentadoria(BaseModel):
 
 
 # Calculadora de juros compostos
-@app.post('/calculadora')
+@app.post('/calcular')
 def tabela_juros(body: Calculadora):
 
     i = body.taxa_juros / 100 # I = Taxa de juros em decimais
