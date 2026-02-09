@@ -90,7 +90,7 @@ def tabela_juros(body: Calculadora):
     }
 
 # Calculadora que mostra quanto o usuario precisa para se aposentar
-@app.post('/aposentadoria-calculadora')
+@app.post('/calculadora-aposentadoria')
 def aposentadoria_calculadora(body:CalculadoraAposentadoria):
     # Verificando se o usuario colocou algo no campo R e T
     if body.R <= 0 or body.T <= 0:
